@@ -1,81 +1,108 @@
-# Stage311 REMEDA Trust Score URL + External Verification API
+# Stage311 REMEDA Sigstore Real Verification
 
-Stage311 turns REMEDA Trust Score results into shareable verification URLs and external API responses.
+Stage311 introduces **real Sigstore verification** into REMEDA Trust Score.
+
+---
 
 ## Core Concept
 
 Before Stage311:
 
-```text
-Trust Score can be viewed locally
+sigstore = declared (true / false)
 
 After Stage311:
 
-Trust Score can be shared by URL
-Trust Score can be retrieved by external API
-What Stage311 Adds
-Public Trust Score URL
-/trust/<id> visual verification page
-/api/trust/<id> JSON verification result
-/api/verify external verification API
-accept / pending / reject decision
-Trust Score breakdown
-Evidence JSON
-Fail-closed policy
-Why This Matters
+sigstore = verified (cosign verify-blob)
 
-Stage310 made trust visible.
+---
 
-Stage311 makes trust shareable.
+## What Stage311 Adds
 
-This is the first SaaS-like step where a verification result becomes a URL that can be sent to a customer, reviewer, partner, or external system.
+- Real Sigstore verification (cosign verify-blob)
+- Signature bundle verification
+- Public key based validation
+- Fail-closed behavior for invalid signatures
+- Integration into Trust Score
 
-Trust Model
-Trust Score =
-average(
+---
+
+## Trust Model
+
+Trust Score = average(
   integrity,
   execution,
   identity,
   time,
-  sigstore
+  sigstore (real verification)
 )
-Decision Policy
-trust_score >= 0.85  → accept
-trust_score >= 0.45  → pending
-trust_score < 0.45   → reject
+
+---
+
+## Sigstore Verification
+
+The system runs:
+
+cosign verify-blob
+
+and evaluates:
+
+- signature validity
+- bundle integrity
+- public key verification
+
+---
+
+## Decision Policy
+
+trust_score >= 0.85 → accept  
+trust_score >= 0.45 → pending  
+trust_score < 0.45 → reject  
 
 Fail-closed is enabled.
 
-Run Locally
-pip install -r requirements.txt
-python app.py
+---
 
-Open:
+## Why This Matters
+
+Stage310 made trust visible and shareable.
+
+Stage311 makes trust **real and cryptographically verifiable**.
+
+This transforms REMEDA from a visualization tool into a **verifiable trust system**.
+
+---
+
+## Run
+
+pip install -r requirements.txt  
+python app.py  
 
 http://127.0.0.1:3110
-External API Example
-curl -X POST http://127.0.0.1:3110/api/verify \
-  -H "Content-Type: application/json" \
-  -d '{
-    "url": "https://example.com",
-    "manifest": {
-      "claims": {
-        "execution": true,
-        "identity": true,
-        "integrity": true,
-        "timestamp": true,
-        "workflow": "github-actions",
-        "sigstore": true,
-        "policy_version": "v1"
-      }
-    }
-  }'
 
-The response includes:
+---
 
-share.trust_url
-share.api_url
-License
+## API
+
+POST /api/verify  
+GET /api/trust/<id>
+
+---
+
+## Security Notes
+
+- cosign.key is never committed
+- verification uses public key (cosign.pub)
+- signature bundle (artifact.bundle) is verifiable
+
+---
+
+## Next Stage
+
+Stage312 introduces API Key and SaaS monetization.
+
+---
+
+## License
 
 MIT License
 
