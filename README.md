@@ -1,99 +1,110 @@
-# Stage312 REMEDA SaaS API (Trust Verification Engine)
+Stage313 REMEDA Signed Responsibility
 
-Stage312 turns REMEDA into a **SaaS verification system** with API Key control.
+Stage313 introduces **cryptographic responsibility** into REMEDA.
+
+The verification result is no longer just computed.
+
+It is explicitly approved and signed by a human.
 
 ---
 
 ## Core Concept
 
-Before Stage312:
+Before Stage313:
 
-Verification was open and unrestricted.
+- decision = system output
+- no explicit human responsibility
 
-After Stage312:
+After Stage313:
 
-Verification is controlled and monetizable via API Key.
-
----
-
-## What Stage312 Adds
-
-- API Key authentication
-- Access control for verification requests
-- SaaS-ready architecture
-- Integration with:
-  - Trust Score (Stage310)
-  - Sigstore real verification (Stage311)
-  - Policy-based decision engine
+- decision + signature = accountable approval
+- the result is cryptographically bound to the signer
 
 ---
 
-## Architecture
+## Signed Statement
 
-Client → API Key → Verification Engine → Decision
+"I approve this verification result as accept."
 
----
-
-## API
-
-### POST /api/verify
-
-Headers:
-
-x-api-key: your-api-key
-
-Returns:
-
-- decision (accept / pending / reject)
-- score (0.0 - 1.0)
-- sigstore_verified
-- breakdown
+This statement is **digitally signed**.
 
 ---
 
-## Example
+## Files
 
-curl -X POST http://127.0.0.1:3120/api/verify \
--H "x-api-key: test-key-123"
-
----
-
-## Decision Model
-
-trust_score >= 0.85 → accept  
-trust_score >= 0.45 → pending  
-trust_score < 0.45 → reject  
-
-Fail-closed is enabled.
+- decision.json → final decision (authoritative)
+- decision.json.sig → detached signature (GPG)
+- signed_decision.json → signed metadata structure
+- manifest.json → verification input
+- verification.json → verification result
 
 ---
 
-## Why This Matters
+## How to Verify
 
-Stage310 → visible trust  
-Stage311 → verifiable trust  
-Stage312 → monetizable trust  
+Anyone can verify the signature locally:
 
-This transforms REMEDA into a **trust infrastructure service**.
+```bash
+gpg --verify decision.json.sig decision.json
 
----
+Expected output:
 
-## Security
+Good signature from "Motohiro Suzuki"
+Security Model
+The signature cannot be forged without the private key
+The decision cannot be altered without breaking verification
+Anyone can independently verify the result
+Responsibility is explicit and non-repudiable
+Responsibility Model
 
-- cosign.key is never committed
-- verification uses public key
-- Sigstore verification enforced
+Stage313 introduces a critical shift:
 
----
+The system computes the result
+A human explicitly approves it
+The approval is cryptographically signed
 
-## Next Stage
+This establishes:
 
-Stage313 introduces public endpoint deployment and external access.
+Accountability
+Non-repudiation
+Verifiable human intent
+Stage Position
+Stage312 → Sellable verification (API)
+Stage313 → Signed responsibility ← current stage
+Stage314 → Public verification URL (next)
+Why This Matters
 
----
+Verification alone is not enough.
 
-## License
+To be trusted in real-world systems:
 
-MIT License
+Someone must take responsibility
+That responsibility must be provable
 
-Copyright (c) 2025 Motohiro Suzuki
+Stage313 makes responsibility:
+
+Visible
+Verifiable
+Immutable
+License
+
+MIT License (2025)
+
+This project is released under the MIT License.
+You are free to use, modify, and distribute this software.
+
+See the LICENSE file for details.
+
+Summary
+
+Stage313 transforms verification into responsibility.
+
+It ensures that:
+
+A decision is not just generated
+It is explicitly approved
+It is cryptographically proven
+It is globally verifiable
+Author
+
+Motohiro Suzuki

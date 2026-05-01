@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Stage314 Public Verification</title>
+</head>
+<body>
+
+<h1>Stage314 Public Verification</h1>
+
+<h2>Decision</h2>
+<pre id="decision"></pre>
+
+<h2>Signature</h2>
+<pre id="signature"></pre>
+
+<h2>Verify</h2>
+<pre>gpg --verify decision.json.sig decision.json</pre>
+
+<p>This decision is publicly verifiable.</p>
+
+<script>
+fetch('../decision.json')
+  .then(r => r.text())
+  .then(t => document.getElementById('decision').textContent = t);
+
+fetch('../decision.json.sig')
+  .then(r => r.text())
+  .then(t => document.getElementById('signature').textContent = t);
+</script>
+
+</body>
+</html>
